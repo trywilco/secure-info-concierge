@@ -166,12 +166,11 @@ async def populate_sample_data():
         
         await db.commit()
 
-async def get_client_data(query_tag: str, sensitivity_threshold: int = 3) -> List[Dict]:
-    """Get client data based on query tag and sensitivity threshold
+async def get_client_data(query_tag: str) -> List[Dict]:
+    """Get client data based on query tag
     
     Args:
         query_tag: The type of data to retrieve
-        sensitivity_threshold: Maximum sensitivity level to return (1-3)
         
     Returns:
         List of matching data items
@@ -179,27 +178,26 @@ async def get_client_data(query_tag: str, sensitivity_threshold: int = 3) -> Lis
     async with aiosqlite.connect(DATABASE_PATH) as db:
         db.row_factory = aiosqlite.Row
         async with db.execute(
-            "SELECT id, query_tag, info, sensitivity_level, last_updated FROM client_data WHERE query_tag = ? AND sensitivity_level <= ?",
-            (query_tag, sensitivity_threshold)
+            "SELECT id, query_tag, info, sensitivity_level, last_updated FROM client_data WHERE query_tag = ?",
+            (query_tag,)
         ) as cursor:
             rows = await cursor.fetchall()
             return [dict(row) for row in rows]
 
-async def add_client_data(query_tag: str, info: str, sensitivity_level: int = 1) -> int:
-    """Add new client data with specified sensitivity level
+async def add_client_data(query_tag: str, info: str) -> int:
+    """Add new client data
     
     Args:
         query_tag: The type of data being added
         info: The information content
-        sensitivity_level: How sensitive the data is (1-3)
         
     Returns:
         ID of the newly inserted record
     """
     async with aiosqlite.connect(DATABASE_PATH) as db:
         cursor = await db.execute(
-            "INSERT INTO client_data (query_tag, info, sensitivity_level) VALUES (?, ?, ?)",
-            (query_tag, info, sensitivity_level)
+            "INSERT INTO client_data (query_tag, info, sensitivity_level) VALUES (?, ?, 1)",
+            (query_tag, info)
         )
         await db.commit()
         return cursor.lastrowid
