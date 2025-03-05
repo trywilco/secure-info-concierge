@@ -22,10 +22,14 @@ echo "Starting Docker image build in the background..."
 (
     # Build the application image
     echo "Building application Docker image..."
-    docker compose build --parallel &
-
-    # Wait for all background processes to complete
-    wait
+    docker compose build --no-cache
+    
+    # Pull any images that might be needed
+    docker compose pull
+    
+    # Create a marker file to indicate build is complete
+    touch /tmp/.docker_build_complete
+    
     echo "✅ Docker images prepared and ready to use!"
 ) &
 
