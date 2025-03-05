@@ -17,6 +17,27 @@ echo "export CODESPACE_BACKEND_URL=\"${CODESPACE_BACKEND_URL}\"" >> ~/.bashrc
 echo "export ENGINE_WILCO_AI_URL=\"${ENGINE_WILCO_AI_CONFIG}\"" >> ~/.bashrc
 echo "export CODESPACE_WDS_SOCKET_PORT=443" >> ~/.bashrc
 
+# Build Docker images in the background
+echo "Starting Docker image build in the background..."
+(
+    # Extract base image from Dockerfile to pull it first
+    if [ -f Dockerfile ]; then
+        BASE_IMAGE=$(grep -m 1 "^FROM" Dockerfile | awk '{print $2}')
+        if [ -n "$BASE_IMAGE" ]; then
+            echo "Pulling base image: $BASE_IMAGE..."
+            docker pull "$BASE_IMAGE" &
+        fi
+    fi
+
+    # Build the application image
+    echo "Building application Docker image..."
+    docker compose build --parallel &
+
+    # Wait for all background processes to complete
+    wait
+    echo "✅ Docker images prepared and ready to use!"
+) &
+
 # Export welcome prompt in bash:
 echo "printf \"\n\n🔒 Secure Info Concierge: Your Personal Security Assistant 🔒\n\"" >> ~/.bashrc
 echo "printf \"\n\x1b[31m \x1b[1m👉 Run: \\\`docker compose up\\\` to start the secure info service. 👈\n\n\"" >> ~/.bashrc 
