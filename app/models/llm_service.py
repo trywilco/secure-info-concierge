@@ -36,9 +36,6 @@ class LLMService:
             raise
     
     def generate_response(self, query, context=None):
-        # Sanitize the query
-        sanitized_query = self._sanitize_input(query)
-        
         system_message = "You are a secure financial information concierge. "
         system_message += "Provide helpful, accurate, and concise responses about financial information. "
         system_message += "Never reveal sensitive information unless explicitly authorized. "
@@ -51,7 +48,7 @@ class LLMService:
                 model=self.deployment_name,
                 messages=[
                     {"role": "system", "content": system_message},
-                    {"role": "user", "content": sanitized_query}
+                    {"role": "user", "content": query}
                 ],
                 temperature=0.7,
                 max_tokens=256,
@@ -122,18 +119,3 @@ class LLMService:
         except Exception as e:
             print(f"Error interpreting user intent: {str(e)}")
             return "general_question"
-    
-    def _sanitize_input(self, text):
-        """Sanitize user input to remove potential harmful content"""
-        if not text:
-            return ""
-        
-        # Remove any potential SQL injection or script tags
-        sanitized = re.sub(r'[<>]|script|SELECT|INSERT|UPDATE|DELETE|DROP|UNION|--', '', text, flags=re.IGNORECASE)
-        
-        # Limit length
-        max_length = 1000
-        if len(sanitized) > max_length:
-            sanitized = sanitized[:max_length]
-        
-        return sanitized
