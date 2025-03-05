@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app
+      - /app/data
+    environment:
+      - PORT=8000
+      - DATABASE_PATH=/app/data/financial_data.db
+      - JWT_SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      - AZURE_OPENAI_ENDPOINT=https://wilco-ai.openai.azure.com
+      - AZURE_OPENAI_API_KEY=fec412fcb1f14812b7416e74ae7c0f6b
+      - AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+      - AZURE_OPENAI_API_VERSION=2025-01-01-preview
+    restart: unless-stopped
