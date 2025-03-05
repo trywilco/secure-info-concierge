@@ -344,3 +344,28 @@ async def get_spending_analysis(username: str, days: int = 30) -> Dict[str, Any]
             'categories': categories,
             'analysis_date': datetime.datetime.now().strftime('%Y-%m-%d')
         }
+
+async def get_all_recent_transactions(limit: int = 10) -> List[Dict]:
+    """Get recent transactions across all accounts in the system
+    
+    Args:
+        limit: Maximum number of transactions to return
+        
+    Returns:
+        List of transaction dictionaries
+    """
+    async with aiosqlite.connect(DATABASE_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        
+        query = """
+        SELECT t.id, t.transaction_type, t.amount, t.description, t.category, t.transaction_date, 
+               a.account_type, a.account_number, a.username
+        FROM transactions t
+        JOIN user_accounts a ON t.account_id = a.id
+        ORDER BY t.transaction_date DESC
+        LIMIT ?
+        """
+        
+        async with db.execute(query, (limit,)) as cursor:
+            rows = await cursor.fetchall()
+            return [dict(row) for row in rows]

@@ -1,100 +1,123 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const queryForm = document.getElementById('query-form');
-    const responseContent = document.getElementById('response-content');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userName = document.getElementById('user-name');
-    
-    // Check if token exists in localStorage
-    const token = localStorage.getItem('accessToken');
-    if (!token) {
-        window.location.href = '/';
-        return;
-    }
-    
-    // Fetch user information
+document.addEventListener("DOMContentLoaded", function () {
+  const queryForm = document.getElementById("query-form");
+  const responseContent = document.getElementById("response-content");
+  const logoutBtn = document.getElementById("logout-btn");
+  const userName = document.getElementById("user-name");
+
+  const token = localStorage.getItem("accessToken");
+
+  if (token) {
     fetchUserInfo(token);
-    
-    // Handle logout
-    logoutBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.removeItem('accessToken');
-        window.location.href = '/';
-    });
-    
-    // Function to fetch user information
-    async function fetchUserInfo(token) {
-        try {
-            const response = await fetch('/api/users/me', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (response.ok) {
-                const userData = await response.json();
-                userName.textContent = userData.full_name || userData.username;
-            } else {
-                // If unauthorized, redirect to login
-                if (response.status === 401) {
-                    localStorage.removeItem('accessToken');
-                    window.location.href = '/';
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching user info:', error);
-        }
+  } else {
+    if (userName) userName.textContent = "Guest";
+    if (logoutBtn) {
+      logoutBtn.textContent = "Login";
+      logoutBtn.setAttribute("href", "/");
     }
-    
-    // Handle query submission
-    queryForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const query = document.getElementById('query').value;
-        
-        // Show loading state
-        responseContent.innerHTML = '<p class="placeholder">Processing your query...</p>';
-        
-        try {
-            const response = await fetch('/api/secure-query', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    query: query
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                // Create a formatted response HTML
-                let responseHTML = `<div class="ai-response">${formatResponse(data.response)}</div>`;
-                
-                // Display the response
-                responseContent.innerHTML = responseHTML;
-            } else {
-                // Handle error
-                responseContent.innerHTML = `<p class="error-message">${data.detail || 'An error occurred while processing your query.'}</p>`;
-                
-                // If unauthorized, redirect to login
-                if (response.status === 401) {
-                    localStorage.removeItem('accessToken');
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 2000);
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            responseContent.innerHTML = '<p class="error-message">An error occurred. Please try again later.</p>';
-        }
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      if (token) {
+        localStorage.removeItem("accessToken");
+      }
+      window.location.href = "/";
     });
-    
-    // Helper function to format the response text with line breaks
-    function formatResponse(text) {
-        return text.replace(/\n/g, '<br>');
+  }
+
+  async function fetchUserInfo(token) {
+    try {
+      const response = await fetch("/api/users/me", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        if (userName)
+          userName.textContent = userData.full_name || userData.username;
+      } else {
+        if (response.status === 401) {
+          localStorage.removeItem("accessToken");
+          if (userName) userName.textContent = "Guest";
+          if (logoutBtn) logoutBtn.textContent = "Login";
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      if (userName) userName.textContent = "Guest";
+      if (logoutBtn) logoutBtn.textContent = "Login";
     }
+  }
+
+  if (queryForm) {
+    queryForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      let query = "";
+      const queryElement = document.getElementById("query");
+      if (
+        queryElement instanceof HTMLInputElement ||
+        queryElement instanceof HTMLTextAreaElement
+      ) {
+        query = queryElement.value;
+      }
+
+      if (responseContent) {
+        responseContent.innerHTML =
+          '<p class="placeholder">Processing your query...</p>';
+      }
+
+      try {
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+
+        const response = await fetch("/api/secure-query", {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            query: query,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok && responseContent) {
+          let responseHTML = `<div class="ai-response">${formatResponse(
+            data.response
+          )}</div>`;
+
+          responseContent.innerHTML = responseHTML;
+        } else if (responseContent) {
+          responseContent.innerHTML = `<p class="error-message">${
+            data.detail || "An error occurred while processing your query."
+          }</p>`;
+
+          if (response.status === 401 && token) {
+            localStorage.removeItem("accessToken");
+            if (userName) userName.textContent = "Guest";
+            if (logoutBtn) logoutBtn.textContent = "Login";
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        if (responseContent) {
+          responseContent.innerHTML =
+            '<p class="error-message">An error occurred. Please try again later.</p>';
+        }
+      }
+    });
+  }
+
+  function formatResponse(text) {
+    return text.replace(/\n/g, "<br>");
+  }
 });
