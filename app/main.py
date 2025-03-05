@@ -104,12 +104,11 @@ async def ready_check():
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-@app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request):
-    # We'll handle authentication in the frontend
     return templates.TemplateResponse("dashboard.html", {"request": request})
+
+@app.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 if __name__ == "__main__":
     import uvicorn

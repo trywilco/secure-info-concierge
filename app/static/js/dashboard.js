@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (userName) userName.textContent = "Guest";
     if (logoutBtn) {
       logoutBtn.textContent = "Login";
-      logoutBtn.setAttribute("href", "/");
+      logoutBtn.setAttribute("href", "/login");
     }
   }
 
@@ -21,8 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       if (token) {
         localStorage.removeItem("accessToken");
+        window.location.href = "/";
+      } else {
+        window.location.href = "/login";
       }
-      window.location.href = "/";
     });
   }
 

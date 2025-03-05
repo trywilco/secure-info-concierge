@@ -64,7 +64,6 @@ You can set these variables in a `.env` file in the project root directory.
   - `static/`: Static assets (CSS, JavaScript)
   - `templates/`: HTML templates
 - `data/`: Directory for storing the SQLite database
-- `tests/`: Unit tests
 - `Dockerfile`: Instructions for building the Docker image
 - `docker-compose.yml`: Docker Compose configuration
 - `requirements.txt`: Python dependencies
@@ -84,13 +83,3 @@ The application runs in a Docker container:
    ```
    docker compose up --build
    ```
-
-## Security Notes
-
-This is an educational platform designed to teach secure data handling. In a production environment, consider the following:
-
-- Use a more secure database system for sensitive financial data
-- Store secret keys and credentials in a secure vault or environment variables
-- Implement more robust authentication mechanisms
-- Use HTTPS for all communications
-- Regularly update dependencies to patch security vulnerabilities
