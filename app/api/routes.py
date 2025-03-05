@@ -34,7 +34,6 @@ async def get_optional_user(authorization: Optional[str] = Header(None)):
 @router.post("/secure-query", response_model=QueryResponse)
 async def secure_query(
     request: QueryRequest,
-    background_tasks: BackgroundTasks,
     current_user: Optional[User] = Depends(get_optional_user)
 ):
     query = request.query
