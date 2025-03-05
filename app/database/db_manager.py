@@ -49,17 +49,6 @@ async def init_db():
         )
         ''')
         
-        # User query history for personalization
-        await db.execute('''
-        CREATE TABLE IF NOT EXISTS query_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            query TEXT NOT NULL,
-            intent_tag TEXT,
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-        ''')
-        
         await db.commit()
 
 async def populate_sample_data():
@@ -249,45 +238,6 @@ async def get_recent_transactions(username: str, limit: int = 10) -> List[Dict]:
         """
         
         async with db.execute(query, (username, limit)) as cursor:
-            rows = await cursor.fetchall()
-            return [dict(row) for row in rows]
-
-async def log_user_query(username: str, query: str, intent_tag: Optional[str] = None) -> int:
-    """Log a user query for future analysis and personalization
-    
-    Args:
-        username: The username making the query
-        query: The actual query text
-        intent_tag: Optional classification of the query intent
-        
-    Returns:
-        ID of the newly inserted log entry
-    """
-    async with aiosqlite.connect(DATABASE_PATH) as db:
-        cursor = await db.execute(
-            "INSERT INTO query_history (username, query, intent_tag) VALUES (?, ?, ?)",
-            (username, query, intent_tag)
-        )
-        await db.commit()
-        return cursor.lastrowid
-
-async def get_user_query_history(username: str, limit: int = 20) -> List[Dict]:
-    """Get a user's recent query history
-    
-    Args:
-        username: The username to get history for
-        limit: Maximum number of queries to return
-        
-    Returns:
-        List of query history dictionaries
-    """
-    async with aiosqlite.connect(DATABASE_PATH) as db:
-        db.row_factory = aiosqlite.Row
-        
-        async with db.execute(
-            "SELECT id, query, intent_tag, timestamp FROM query_history WHERE username = ? ORDER BY timestamp DESC LIMIT ?",
-            (username, limit)
-        ) as cursor:
             rows = await cursor.fetchall()
             return [dict(row) for row in rows]
 

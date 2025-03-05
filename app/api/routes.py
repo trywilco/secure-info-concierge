@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from app.auth.jwt import get_current_user, User, oauth2_scheme
 from app.database.db_manager import (
-    get_client_data, log_user_query, get_account_balance, 
+    get_client_data, get_account_balance, 
     get_recent_transactions, get_all_recent_transactions
 )
 from app.models.llm_service import LLMService
@@ -42,7 +42,6 @@ async def secure_query(
     intent_tag = llm_service.interpret_user_intent(query)
     
     if current_user:
-        background_tasks.add_task(log_user_query, current_user.username, query, intent_tag)
         context = await get_context_for_intent(intent_tag, current_user.username)
     else:
         context = await get_context_for_intent(intent_tag, None)
@@ -65,7 +64,7 @@ async def get_context_for_intent(intent_tag: str, username: str = None) -> str:
             
     elif intent_tag in ["transaction_history", "spending_analysis"]:
         if username:
-            transactions = await get_recent_transactions(username, 5)
+            transactions = await get_recent_transactions(username)
             if transactions:
                 trans_info = "\n".join([f"{t['transaction_date'].split()[0]} - {t['description']} - ${t['amount']:.2f} ({t['transaction_type']})" for t in transactions])
                 return f"Recent Transactions for {username}:\n{trans_info}"

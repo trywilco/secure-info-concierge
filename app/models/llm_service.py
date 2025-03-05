@@ -2,6 +2,9 @@ import re
 import logging
 from openai import AzureOpenAI
 from app.config.credentials_service import CredentialsService
+from transformers import pipeline
+
+sentiment_analyzer = pipeline("sentiment-analysis")
 
 logger = logging.getLogger(__name__)
 
