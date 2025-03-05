@@ -4,7 +4,7 @@ from typing import Optional, Dict, Any, List, Union
 from app.auth.jwt import get_current_user, User
 from app.database.db_manager import (
     get_client_data, log_user_query, get_account_balance, 
-    get_recent_transactions, get_user_query_history, get_spending_analysis
+    get_recent_transactions
 )
 from app.models.llm_service import LLMService
 import json
@@ -61,27 +61,3 @@ async def secure_query(
 @router.get("/users/me", response_model=User)
 async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
-
-@router.get("/users/history")
-async def get_query_history(current_user: User = Depends(get_current_user)):
-    """Get the user's query history"""
-    history = await get_user_query_history(current_user.username)
-    return {"history": history}
-
-@router.get("/users/accounts")
-async def get_user_accounts(current_user: User = Depends(get_current_user)):
-    """Get the user's financial accounts"""
-    accounts = await get_account_balance(current_user.username)
-    return {"accounts": accounts}
-
-@router.get("/users/transactions")
-async def get_user_transactions(limit: int = 10, current_user: User = Depends(get_current_user)):
-    """Get the user's recent transactions"""
-    transactions = await get_recent_transactions(current_user.username, limit)
-    return {"transactions": transactions}
-
-@router.get("/users/spending-analysis")
-async def get_user_spending_analysis(days: int = 30, current_user: User = Depends(get_current_user)):
-    """Get spending analysis for the user"""
-    analysis = await get_spending_analysis(current_user.username, days)
-    return analysis
