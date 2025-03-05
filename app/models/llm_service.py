@@ -1,39 +1,48 @@
 import re
 import os
+import logging
 from openai import AzureOpenAI
+from app.config.credentials_service import CredentialsService
+
+logger = logging.getLogger(__name__)
 
 class LLMService:
     """Service for generating responses using Azure OpenAI"""
     
     def __init__(self):
         """Initialize the Azure OpenAI service"""
-        print("Initializing LLM Service with Azure OpenAI...")
+        logger.info("Initializing LLM Service with Azure OpenAI...")
         
-        # Initialize Azure OpenAI client with hardcoded values for testing
-        # In production, these should be set as environment variables or passed securely
-        self.azure_endpoint = "https://wilco-ai.openai.azure.com"
-        self.api_key = "fec412fcb1f14812b7416e74ae7c0f6b"
-        self.deployment_name = "gpt-4o-mini"
-        self.api_version = "2025-01-01-preview"
-        
-        # Validate Azure OpenAI configuration
-        if not self.azure_endpoint or not self.api_key:
-            print("Warning: Azure OpenAI endpoint or API key not set. Set AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY environment variables.")
-        else:
-            print(f"Azure OpenAI endpoint configured: {self.azure_endpoint}")
-            print(f"Using deployment: {self.deployment_name}")
-            print(f"Using API version: {self.api_version}")
-        
-        # Initialize Azure OpenAI client
         try:
+            # Initialize credentials service
+            self.credentials_service = CredentialsService()
+            credentials = self.credentials_service.get_credentials()
+            
+            # Extract credentials
+            self.azure_endpoint = credentials["base_url"]
+            self.api_key = credentials["api_key"]
+            self.deployment_name = credentials["deployment_name"]
+            self.api_version = credentials["api_version"]
+            
+            # Log Azure OpenAI configuration
+            logger.info(f"Azure OpenAI endpoint configured: {self.azure_endpoint}")
+            logger.info(f"Using deployment: {self.deployment_name}")
+            logger.info(f"Using API version: {self.api_version}")
+            
+            # Initialize Azure OpenAI client
             self.client = AzureOpenAI(
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
                 api_version=self.api_version
             )
-            print("Azure OpenAI client initialized successfully")
+            logger.info("Azure OpenAI client initialized successfully")
+            
+        except ValueError as e:
+            logger.error(f"Configuration error: {str(e)}")
+            raise
         except Exception as e:
-            print(f"Error initializing Azure OpenAI client: {str(e)}")
+            logger.error(f"Error initializing Azure OpenAI client: {str(e)}")
+            raise
     
     def generate_response(self, query, context=None, transaction_history=None):
         """Generate a response to the user query using Azure OpenAI"""

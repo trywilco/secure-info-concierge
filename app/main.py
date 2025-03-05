@@ -6,10 +6,19 @@ from fastapi.requests import Request
 import asyncio
 import time
 import os
+import logging
 from dotenv import load_dotenv
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Set default ENGINE_WILCO_AI_URL if not present
+if not os.environ.get("ENGINE_WILCO_AI_URL"):
+    os.environ["ENGINE_WILCO_AI_URL"] = "https://api.wilco.ai/credentials"
 
 from app.api.routes import router as api_router
 from app.auth.routes import router as auth_router
@@ -23,11 +32,11 @@ startup_time = time.time()
 # Initialize database on startup
 @asyncio.coroutine
 def setup_db():
-    print("Initializing database...")
+    logger.info("Initializing database...")
     yield from init_db()
-    print("Populating sample data...")
+    logger.info("Populating sample data...")
     yield from populate_sample_data()
-    print("Database setup complete!")
+    logger.info("Database setup complete!")
 
 app = FastAPI(title="SecureInfo Concierge", description="Financial assistant application with LLM integration")
 
@@ -36,28 +45,19 @@ async def startup_event():
     global app_ready, startup_time
     startup_time = time.time()
     
-    print("\n" + "="*50)
-    print("STARTING SECURE INFO CONCIERGE APPLICATION")
-    print("="*50)
-    print("Initializing services...")
+    logger.info("\n" + "="*50)
+    logger.info("STARTING SECURE INFO CONCIERGE APPLICATION")
+    logger.info("="*50)
+    logger.info("Initializing services...")
     
     # Setup database
     start_time = asyncio.get_event_loop().time()
     await setup_db()
     db_time = asyncio.get_event_loop().time() - start_time
-    print(f"Database initialization completed in {db_time:.2f} seconds")
+    logger.info(f"Database initialization completed in {db_time:.2f} seconds")
     
-    # Log Azure OpenAI configuration
-    azure_endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT", "Not set")
-    azure_deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "Not set")
-    azure_api_version = os.environ.get("AZURE_OPENAI_API_VERSION", "Not set")
-    print(f"Azure OpenAI Configuration:")
-    print(f"  - Endpoint: {azure_endpoint}")
-    print(f"  - Deployment: {azure_deployment}")
-    print(f"  - API Version: {azure_api_version}")
-    
-    print("All services initialized successfully!")
-    print("="*50 + "\n")
+    logger.info("All services initialized successfully!")
+    logger.info("="*50 + "\n")
     
     # Set the app as ready after all initialization is complete
     # Note: This will be set to True after all models are loaded

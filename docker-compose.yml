@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
@@ -14,8 +14,9 @@ services:
       - JWT_SECRET_KEY=09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
-      - AZURE_OPENAI_ENDPOINT=https://wilco-ai.openai.azure.com
-      - AZURE_OPENAI_API_KEY=fec412fcb1f14812b7416e74ae7c0f6b
-      - AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
-      - AZURE_OPENAI_API_VERSION=2025-01-01-preview
+      - ENGINE_WILCO_AI_URL=${ENGINE_WILCO_AI_URL}
+
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4

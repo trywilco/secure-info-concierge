@@ -13,8 +13,8 @@ RUN mkdir -p /app/data
 # Copy the application
 COPY . .
 
-# Create a default .env file with Azure OpenAI settings
-RUN echo "# Azure OpenAI API Configuration\nAZURE_OPENAI_ENDPOINT=https://wilco-ai.openai.azure.com\nAZURE_OPENAI_API_KEY=fec412fcb1f14812b7416e74ae7c0f6b\nAZURE_OPENAI_DEPLOYMENT=gpt-4o-mini\nAZURE_OPENAI_API_VERSION=2025-01-01-preview" > /app/.env
+# Create a default .env file with configuration settings
+RUN echo "# Engine Wilco AI Configuration\nENGINE_BASE_URL=https://engine.wilco.gg\nWILCO_ID=620ba777a0cccde6931ad14d\n\n# The ENGINE_WILCO_AI_URL will be constructed as:\n# \${ENGINE_BASE_URL}/users/\${WILCO_ID}/wilcoAiConfig" > /app/.env
 
 EXPOSE 8000
 
