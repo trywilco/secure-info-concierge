@@ -19,17 +19,20 @@ SecureInfo Concierge is an educational platform simulating a sophisticated finan
 ## Quick Start
 
 1. Clone the repository (or download the source code):
+
    ```
    git clone <repository-url>
    cd secure-info-concierge
    ```
 
 2. Build and run the application using Docker Compose:
+
    ```
-   docker-compose up --build
+   docker compose up --build
    ```
 
 3. Access the application in your web browser:
+
    ```
    http://localhost:8000
    ```
@@ -65,20 +68,21 @@ You can set these variables in a `.env` file in the project root directory.
 - `Dockerfile`: Instructions for building the Docker image
 - `docker-compose.yml`: Docker Compose configuration
 - `requirements.txt`: Python dependencies
-- `run.py`: Application entry point
 
 ## Development
 
-To run the application in development mode without Docker:
+The application runs in a Docker container:
 
-1. Install the dependencies:
+1. Start the application with Docker Compose:
+
    ```
-   pip install -r requirements.txt
+   docker compose up
    ```
 
-2. Run the application:
+2. For rebuilding after changes:
+
    ```
-   python run.py
+   docker compose up --build
    ```
 
 ## Security Notes

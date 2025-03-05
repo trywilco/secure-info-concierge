@@ -1,8 +1,7 @@
 {
     "name": "Secure Info Concierge",
-    "dockerComposeFile": "../docker-compose.yml",
-    "service": "app",
-    "workspaceFolder": "/app",
+    "image": "mcr.microsoft.com/devcontainers/python:3.9",
+    "workspaceFolder": "/workspace",
     "postCreateCommand": "bash .devcontainer/setup.sh",
     "customizations": {
         "vscode": {
@@ -12,5 +11,9 @@
             ]
         }
     },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "remoteUser": "root",
     "forwardPorts": [8000]
 } 
