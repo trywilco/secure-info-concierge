@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -22,7 +22,6 @@ if not os.environ.get("ENGINE_WILCO_AI_URL"):
 
 from app.api.routes import router as api_router
 from app.auth.routes import router as auth_router
-from app.auth.jwt import get_current_user
 from app.database.db_manager import init_db, populate_sample_data
 
 # Global variable to track application readiness
@@ -30,12 +29,11 @@ app_ready = False
 startup_time = time.time()
 
 # Initialize database on startup
-@asyncio.coroutine
-def setup_db():
+async def setup_db():
     logger.info("Initializing database...")
-    yield from init_db()
+    await init_db()
     logger.info("Populating sample data...")
-    yield from populate_sample_data()
+    await populate_sample_data()
     logger.info("Database setup complete!")
 
 app = FastAPI(title="SecureInfo Concierge", description="Financial assistant application with LLM integration")

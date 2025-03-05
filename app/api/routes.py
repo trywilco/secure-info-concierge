@@ -12,9 +12,6 @@ import json
 router = APIRouter()
 llm_service = LLMService()
 
-# Store previous queries for semantic similarity search
-previous_queries = []
-
 class QueryRequest(BaseModel):
     query: str
 
