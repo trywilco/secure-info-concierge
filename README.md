@@ -40,3 +40,11 @@ The application runs in a Docker container:
 - `Dockerfile`: Instructions for building the Docker image
 - `docker-compose.yml`: Docker Compose configuration
 - `requirements.txt`: Python dependencies
+
+## Main Components
+
+- **API Endpoint**: The `app/api/secure-query` endpoint processes all financial queries and returns AI-generated responses
+- **LLM Service**: The `app/models/llm_service.py` manages OpenAI interactions and query interpretation
+- **Dashboard**: The main interface at `app/templates/dashboard.html` for submitting queries and viewing responses
+- **Login Page**: The authentication interface at `app/templates/index.html` for user access management
+
