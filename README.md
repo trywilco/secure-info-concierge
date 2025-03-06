@@ -11,48 +11,21 @@ SecureInfo Concierge is an educational platform simulating a sophisticated finan
 - Minimalist web interface for user interactions
 - Dockerized environment for easy deployment
 
-## Prerequisites
+## Quick start
 
-- Docker and Docker Compose installed on your system
-- Git (optional, for cloning the repository)
+The application runs in a Docker container:
 
-## Quick Start
-
-1. Clone the repository (or download the source code):
+1. Start the application with Docker Compose:
 
    ```
-   git clone <repository-url>
-   cd secure-info-concierge
+   docker compose up
    ```
 
-2. Build and run the application using Docker Compose:
+2. Access the application in your web browser on port 8000
 
-   ```
-   docker compose up --build
-   ```
-
-3. Access the application in your web browser:
-
-   ```
-   http://localhost:8000
-   ```
-
-4. Login with the following credentials:
+3. If you want to login, use the following default credentials:
    - Username: johndoe
    - Password: secret
-
-## Environment Variables
-
-The application can be configured using the following environment variables:
-
-- `DATABASE_PATH`: Path to the SQLite database file (default: `data/financial_data.db`)
-- `JWT_SECRET_KEY`: Secret key for JWT token generation (default: a predefined key for development)
-- `AZURE_OPENAI_ENDPOINT`: Your Azure OpenAI API endpoint URL (e.g., https://your-resource-name.openai.azure.com)
-- `AZURE_OPENAI_API_KEY`: Your Azure OpenAI API key
-- `AZURE_OPENAI_DEPLOYMENT`: Your Azure OpenAI deployment name (e.g., "gpt-4o-mini")
-- `AZURE_OPENAI_API_VERSION`: Your Azure OpenAI API version (default: "2023-05-15")
-
-You can set these variables in a `.env` file in the project root directory.
 
 ## Project Structure
 
@@ -67,19 +40,3 @@ You can set these variables in a `.env` file in the project root directory.
 - `Dockerfile`: Instructions for building the Docker image
 - `docker-compose.yml`: Docker Compose configuration
 - `requirements.txt`: Python dependencies
-
-## Development
-
-The application runs in a Docker container:
-
-1. Start the application with Docker Compose:
-
-   ```
-   docker compose up
-   ```
-
-2. For rebuilding after changes:
-
-   ```
-   docker compose up --build
-   ```
