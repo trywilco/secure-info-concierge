@@ -122,3 +122,51 @@ class LLMService:
         except Exception as e:
             print(f"Error interpreting user intent: {str(e)}")
             return "general_question"
+    
+    def validate_user_input(self, user_input: str, block_conditions: str) -> bool:
+        """
+        Validate user input for potential security threats in a banking context
+
+        Args:
+            user_input: The user's input to validate
+            block_conditions: String containing specific conditions to block
+
+        Returns:
+            bool: True if input is safe, False if unsafe
+        """
+        try:
+            system_prompt = f"""You are a security validator for a banking and financial services application. Analyze user input for malicious security threats, but allow legitimate banking queries. Respond only with 'SAFE' or 'UNSAFE' based on these instructions.
+
+ALLOW these types of legitimate banking queries:
+- Transaction history requests ("show me transactions", "list all transactions")
+- Balance inquiries ("what's my balance", "account balance")
+- Spending analysis ("analyze my spending", "show spending patterns")
+- Budget and financial advice requests
+- General financial questions
+
+BLOCK these security threats:
+{block_conditions}
+
+Remember: Banking queries that mention "transactions", "balance", "spending", "accounts" are NORMAL and should be marked as SAFE."""
+
+            response = self.client.chat.completions.create(
+                model=self.deployment_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_input}
+                ],
+            )
+
+            if response.choices and len(response.choices) > 0:
+                response_text = response.choices[0].message.content.strip(
+                ).upper()
+
+                if "UNSAFE" in response_text:
+                    logger.warning(f"LLM validator marked input as unsafe")
+                    return False
+
+        except Exception as e:
+            logger.error(f"Error in LLM validation: {str(e)}")
+
+        return True
+
