@@ -11,19 +11,24 @@ SecureInfo Concierge is an educational platform simulating a sophisticated finan
 - Minimalist web interface for user interactions
 - Dockerized environment for easy deployment
 
-## Quick start
 
-The application runs in a Docker container:
 
-1. Start the application with Docker Compose:
+## Quick Start
 
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
    ```
-   docker compose up
+
+2. Run the application (recommended for development):
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir app
    ```
+   This will restart the server automatically when you change code in the `app` directory.
 
-2. Access the application in your web browser on port 8000
+3. Access the application in your web browser on port 8000
 
-3. If you want to login, use the following default credentials:
+4. If you want to login, use the following default credentials:
    - Username: johndoe
    - Password: secret
 

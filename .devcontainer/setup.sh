@@ -13,4 +13,4 @@ echo "export ENGINE_WILCO_AI_URL=\"${ENGINE_WILCO_AI_CONFIG}\"" >> ~/.bashrc
 echo "export CODESPACE_WDS_SOCKET_PORT=443" >> ~/.bashrc
 
 echo "printf \"\n\n🔒 Secure Info Concierge: Your Personal Security Assistant 🔒\n\"" >> ~/.bashrc
-echo "printf \"\n\x1b[31m \x1b[1m👉 Run: \\\`docker compose up\\\` to start the secure info service. 👈\n\n\"" >> ~/.bashrc 
+echo "printf \"\n\x1b[32m \x1b[1m👉 See the README for instructions to run the secure info service. 👈\n\n\"" >> ~/.bashrc
