@@ -2,7 +2,6 @@ import re
 import logging
 from openai import AzureOpenAI
 from app.config.credentials_service import CredentialsService
-from textblob import TextBlob
 
 
 logger = logging.getLogger(__name__)
