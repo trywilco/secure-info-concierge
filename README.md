@@ -11,8 +11,6 @@ SecureInfo Concierge is an educational platform simulating a sophisticated finan
 - Minimalist web interface for user interactions
 - Dockerized environment for easy deployment
 
-
-
 ## Quick Start
 
 1. Install dependencies:
