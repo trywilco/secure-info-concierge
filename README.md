@@ -9,7 +9,6 @@ SecureInfo Concierge is an educational platform simulating a sophisticated finan
 - SQLite database for storing financial data
 - JWT-based authentication for secure endpoints
 - Minimalist web interface for user interactions
-- Dockerized environment for easy deployment
 
 ## Quick Start
 
